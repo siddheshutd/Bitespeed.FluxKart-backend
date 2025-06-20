@@ -1,0 +1,20 @@
+{
+  "name": "bitespeed.fluxkart-backend",
+  "version": "1.0.0",
+  "description": "This repository contains code for the backend of FluxKart.com, developed by Speedbite, exclusively to keep track of Dr. He who shall not be named's order history.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "siddheshutd",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
