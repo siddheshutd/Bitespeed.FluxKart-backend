@@ -6,9 +6,13 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx watch index.ts",
+    "dev": "tsx watch src/index.ts",
     "build:watch": "tsc --watch",
     "clean": "rm -rf dist",
+    "db:generate": "prisma generate --schema=src/schema.prisma",
+    "db:push": "prisma db push --schema=src/schema.prisma",
+    "db:migrate": "prisma migrate dev --schema=src/schema.prisma",
+    "db:studio": "prisma studio --schema=src/schema.prisma",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
