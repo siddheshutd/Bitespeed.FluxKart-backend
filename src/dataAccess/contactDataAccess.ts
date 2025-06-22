@@ -12,6 +12,18 @@ export class ContactDataAccess {
     });
   }
 
+  async getContactsByIds(ids: number[]): Promise<Contact[]> {
+    return await prisma.contact.findMany({
+      where: {
+        id: { in: ids },
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
   async getContactsByPrimaryContactId(primaryContactId: number): Promise<Contact[]> {
     return await prisma.contact.findMany({
       where: {
