@@ -4,7 +4,7 @@
   "description": "This repository contains code for the backend of FluxKart.com, developed by Speedbite, exclusively to keep track of Dr. He who shall not be named's order history.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && run db:generate",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "build:watch": "tsc --watch",
