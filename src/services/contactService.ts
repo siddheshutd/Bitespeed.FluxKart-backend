@@ -2,8 +2,8 @@ import { ContactDataAccess } from '../dataAccess/contactDataAccess';
 import { Contact, CreateContactData, UpdateContactData } from '../dataAccess/interfaces/contact';
 
 export interface ContactIdentifyRequest {
-  phoneNumber?: string;
   email?: string;
+  phoneNumber?: number;
 }
 
 export interface ContactIdentifyResponse {
@@ -24,12 +24,12 @@ export class ContactService {
     this.contactDataAccess = new ContactDataAccess();
   }
 
-  async identifyContactByEmail(request: ContactIdentifyRequest): Promise<ContactIdentifyResponse> {
+  async identifyContactByEmail(email: string): Promise<ContactIdentifyResponse> {
     try {
-      const contact = await this.contactDataAccess.getContactsByEmail(request.email!);
+      const contact = await this.contactDataAccess.getContactsByEmail(email);
 
       if(!contact) { //If no existing contact found, create a new primary contact
-        const newContact = await this.createContact('primary', request.email!);
+        const newContact = await this.createContact('primary', email);
         return {contact: mapToContactListResponse(newContact, [])};
 
       } else { //Else directly process the response as we don't need to create a new contact
@@ -42,12 +42,12 @@ export class ContactService {
     }
   }
 
-  async identifyContactByPhoneNumber(request: ContactIdentifyRequest): Promise<ContactIdentifyResponse> {
+  async identifyContactByPhoneNumber(phoneNumber: string): Promise<ContactIdentifyResponse> {
     try {
-      const contact = await this.contactDataAccess.getContactsByPhoneNumber(request.phoneNumber!);
+      const contact = await this.contactDataAccess.getContactsByPhoneNumber(phoneNumber);
 
       if (!contact) { //If no existing contact found, create a new primary contact
-        const newContact = await this.createContact('primary', undefined, request.phoneNumber!);
+        const newContact = await this.createContact('primary', undefined, phoneNumber);
         return {contact: mapToContactListResponse(newContact, [])};
       } else { //Else directly process the response as we don't need to create a new contact
         const primaryContact = await this.resolvePrimaryContact(contact);
@@ -59,19 +59,19 @@ export class ContactService {
     }
   }
 
-  async identifyContactByEmailAndPhoneNumber(request: ContactIdentifyRequest): Promise<ContactIdentifyResponse> {
+  async identifyContactByEmailAndPhoneNumber(email: string, phoneNumber: string): Promise<ContactIdentifyResponse> {
     try {
-      const contacts = await this.contactDataAccess.getContactsByPhoneNumberOrEmail(request.email!, request.phoneNumber!);
+      const contacts = await this.contactDataAccess.getContactsByPhoneNumberOrEmail(phoneNumber, email);
 
       if(contacts.length === 0) {//If no existing contacts found, create a new primary contact
-        const newContact = await this.createContact('primary', request.email!, request.phoneNumber!);
+        const newContact = await this.createContact('primary', email, phoneNumber);
         return {
           contact: mapToContactListResponse(newContact, [])
         };
       } else {
         //Check if there is an exact match
         const exactMatch = contacts.find(contact => 
-          contact.email === request.email && contact.phoneNumber === request.phoneNumber
+          contact.email === email && contact.phoneNumber === phoneNumber
         );
         if(exactMatch) {
           const primaryContact = await this.resolvePrimaryContact(exactMatch);
@@ -91,7 +91,7 @@ export class ContactService {
         const primaryIds = Array.from(primaryContactIds);
         if(primaryIds.length === 1) { //If there is only one primary contact, create a new secondary contact
           const primaryContactId = primaryIds[0];
-          const newContact = await this.createContact('secondary', request.email!, request.phoneNumber!, primaryContactId);
+          const newContact = await this.createContact('secondary', email, phoneNumber, primaryContactId);
 
           let primaryContact: Contact | null | undefined = contacts.find(contact => contact.id === primaryContactId);
           if(!primaryContact) {

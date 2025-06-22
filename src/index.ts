@@ -1,10 +1,24 @@
 import * as http from 'http';
 import * as dotenv from 'dotenv';
 import prisma from './lib/prisma';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import { ContactController } from './controllers/contactController';
 
 dotenv.config();
+const app = express();
+
+app.use(cors());
+app.use(helmet());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const port: number = Number(process.env.PORT) || 3000;
+
+const contactController = new ContactController();
+
+app.post('/identify', contactController.identify.bind(contactController));
 
 async function connectToDatabase(): Promise<void> {
   try {
@@ -23,7 +37,7 @@ const server: http.Server = http.createServer(async (req: http.IncomingMessage, 
 async function startServer(): Promise<void> {
   await connectToDatabase();
   
-  server.listen(port, () => {
+  app.listen(port, () => {
     console.log(`Speedbite backend server running on port ${port}`);
   });
 }
