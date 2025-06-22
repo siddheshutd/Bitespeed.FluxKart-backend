@@ -1,9 +1,9 @@
 import prisma from '../lib/prisma';
-import { CreateContactData, UpdateContactData } from './interfaces/contact';
+import { Contact, CreateContactData, UpdateContactData } from './interfaces/contact';
 
 export class ContactDataAccess {
 
-  async getContactById(id: number) {
+  async getContactById(id: number): Promise<Contact | null> {
     return await prisma.contact.findUnique({
       where: {
         id,
@@ -12,7 +12,7 @@ export class ContactDataAccess {
     });
   }
 
-  async getContactsByPrimaryContactId(primaryContactId: number) {
+  async getContactsByPrimaryContactId(primaryContactId: number): Promise<Contact[]> {
     return await prisma.contact.findMany({
       where: {
         linkedId: primaryContactId,
@@ -24,7 +24,7 @@ export class ContactDataAccess {
     });
   } 
 
-  async getContactsByPhoneNumberOrEmail(phoneNumber: string, email: string) {
+  async getContactsByPhoneNumberOrEmail(phoneNumber: string, email: string): Promise<Contact[]> {
     return await prisma.contact.findMany({
       where: {
         OR: [
@@ -57,7 +57,7 @@ export class ContactDataAccess {
     });
   } 
 
-  async createContact(data: CreateContactData) {
+  async createContact(data: CreateContactData): Promise<Contact> {
     return await prisma.contact.create({
       data,
     });
